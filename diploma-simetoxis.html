@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <title>Δίπλωμα Συμμετοχής</title>
+  <style>
+    body {
+      background-color: #f0f2f5;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      scroll-behavior: smooth;
+    }
+    .header {
+      width: 100%;
+      background-color: #ffffff;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .header img {
+      height: 70px;
+      margin-right: 15px;
+    }
+    .header h2 {
+      font-size: 22px;
+      color: #333;
+      margin: 0;
+      text-align: left;
+    }
+    .content {
+      padding: 40px 20px;
+    }
+    .card {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: inline-block;
+      max-width: 600px;
+      width: 90%;
+      position: relative;
+    }
+    #previewImage {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+    #nameInput {
+      padding: 12px;
+      font-size: 25px;
+      width: 90%;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    #generateBtn {
+      padding: 12px 24px;
+      font-size: 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #generateBtn:hover {
+      background-color: #45a049;
+    }
+    #successMessage {
+      margin-top: 20px;
+      color: green;
+      font-size: 18px;
+      opacity: 0;
+      transition: opacity 1s;
+      display: none;
+    }
+    .spinner {
+      display: none;
+      margin-top: 20px;
+    }
+    .spinner div {
+      width: 24px;
+      height: 24px;
+      border: 4px solid #4CAF50;
+      border-top: 4px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    h1 {
+      margin-bottom: 30px;
+      color: #333333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <img src="https://i.imgur.com/sLHYS3T.png" alt="Φιλαθλητικός Σύλλογος Ασπροπύργου Άλιος Ύδνα">
+    <h2>Φιλαθλητικός Σύλλογος Ασπροπύργου Άλιος Ύδνα</h2>
+  </div>
+
+  <div class="content">
+    <div class="card">
+      <img id="previewImage" src="https://i.imgur.com/tJHQYcN.png" alt="Προεπισκόπηση Διπλώματος">
+      <h1>Πάρε το Εξατομικευμένο Δίπλωμα Συμμετοχής σου!</h1>
+      <input type="text" id="nameInput" placeholder="Γράψε το όνομά σου">
+      <br><br>
+      <button id="generateBtn" onclick="generateImage()">Δημιουργία Διπλώματος</button>
+      <canvas id="canvas" style="display:none;"></canvas>
+      <div class="spinner" id="spinner"><div></div></div>
+      <div id="successMessage">Το δίπλωμά σου κατέβηκε!</div>
+    </div>
+  </div>
+
+  <script>
+    async function generateImage() {
+      const name = document.getElementById('nameInput').value.trim();
+      if (!name) {
+        alert("Παρακαλώ γράψε το όνομά σου!");
+        return;
+      }
+
+      const spinner = document.getElementById('spinner');
+      const successMessage = document.getElementById('successMessage');
+
+      // Show spinner
+      spinner.style.display = 'block';
+      successMessage.style.display = 'none';
+      successMessage.style.opacity = 0;
+
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = 'https://i.imgur.com/zbbRh0a.png'; // Final diploma template
+      await img.decode();
+
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      ctx.drawImage(img, 0, 0);
+
+      ctx.font = "40px Arial";
+      ctx.fillStyle = "black";
+      ctx.textAlign = "center";
+      ctx.fillText(name, 767, 523);
+
+      const link = document.createElement('a');
+      link.download = 'δίπλωμα-συμμετοχής.png';
+      link.href = canvas.toDataURL();
+      link.click();
+
+      // Hide spinner, show success (no scroll)
+      spinner.style.display = 'none';
+      successMessage.style.display = 'block';
+      setTimeout(() => {
+        successMessage.style.opacity = 1;
+      }, 50);
+    }
+
+    // Allow pressing Enter to generate
+    document.getElementById('nameInput').addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        generateImage();
+      }
+    });
+  </script>
+</body>
+</html>
